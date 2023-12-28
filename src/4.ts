@@ -1,43 +1,40 @@
-interface IKey {
-  unlock(): void;
-}
-
-class Key implements IKey {
-  unlock(): void {
-    console.log("The door is unlocked!");
+class Key {
+  private signature: number;
+  constructor() {
+    this.signature = Math.random();
+  }
+  getSignature(): number {
+    return this.signature;
   }
 }
-
 class Person {
-  private key: IKey;
-
-  constructor(key: IKey) {
+  private key: Key;
+  constructor(key: Key) {
     this.key = key;
   }
-
-  getKey(): IKey {
+  getKey(): Key {
     return this.key;
   }
 }
-
-class MyHouse {
-  private key: IKey;
-
-  constructor(key: IKey) {
+abstract class House {
+  protected door: boolean = false;
+  protected key: Key;
+  protected tenants: Person[] = [];
+  constructor(key: Key) {
     this.key = key;
   }
-
-  openDoor(key: IKey): void {
-    if (key === this.key) {
-      key.unlock();
-      console.log("The door is opened.");
-    } else {
-      console.log("Invalid key");
+  abstract openDoor(key: Key): void;
+  comeIn(person: Person): void {
+    if (this.door) {
+      this.tenants.push(person);
     }
   }
-
-  comeIn(person: Person): void {
-    console.log("Welcome!)");
+}
+class MyHouse extends House {
+  openDoor(key: Key): void {
+    if (this.key.getSignature() === key.getSignature()) {
+      this.door = true;
+    }
   }
 }
 
